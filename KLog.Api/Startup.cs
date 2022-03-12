@@ -1,5 +1,7 @@
 using FluentMigrator.Runner;
 using KLog.Api.Config;
+using KLog.Api.Core.Authentication;
+using KLog.Api.Services;
 using KLog.DataModel.Context;
 using KLog.DataModel.Migrations;
 using KLog.DataModel.Migrations.Releases.Release_001;
@@ -12,6 +14,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 
 namespace KLog.Api
 {
@@ -53,15 +57,27 @@ namespace KLog.Api
             //   Authentication and Authorization   //
             // ************************************ //
 
+            services.AddAuthentication()
+                .AddScheme<ApiKeyOptions, ApiKeyHandler>("ApiKey", null);
+
             // ************************************ //
             //          Additional Services         //
             // ************************************ //
+            services.AddTransient<ISecurityService, SecurityService>();
 
-            services.AddControllers();
-            services.AddSwaggerGen(c =>
+            services.AddHttpContextAccessor();
+
+            services.AddControllers()
+                .AddNewtonsoftJson();
+
+            services.AddSwaggerGen(options =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "KLog.Api", Version = "v1" });
+                options.SwaggerDoc("v1", new OpenApiInfo { Title = "KLog.Api", Version = "v1" });
+
+                string xmlFileName = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFileName));
             });
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider provider)

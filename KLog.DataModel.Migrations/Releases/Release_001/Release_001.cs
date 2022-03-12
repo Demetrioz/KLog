@@ -10,7 +10,7 @@ namespace KLog.DataModel.Migrations.Releases.Release_001
             Create.Table("Application")
                 .WithId("ApplicationId")
                 .WithColumn("Name").AsString(255).NotNullable()
-                .WithColumn("Id").AsGuid().NotNullable()
+                .WithColumn("Id").AsString(8).NotNullable()
                 .WithColumn("Key").AsString(255).NotNullable()
                 .WithKLogBase();
 
