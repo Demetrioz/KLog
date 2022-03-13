@@ -5,5 +5,6 @@ namespace KLog.Api.Config
     public class AppSettings
     {
         public Dictionary<string, string> ConnectionStrings { get; set; }
+        public string[] CORS { get; set; }
     }
 }

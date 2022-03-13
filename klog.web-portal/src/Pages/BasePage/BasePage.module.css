@@ -1,0 +1,17 @@
+.base {
+  height: 100%;
+}
+
+.content_base {
+  padding-top: 72px;
+  padding-left: 248px;
+  padding-right: 8px;
+  padding-bottom: 8px;
+}
+
+.content_base_narrow {
+  padding-top: 66px;
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-bottom: 8px;
+}

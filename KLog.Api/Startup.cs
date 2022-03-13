@@ -54,6 +54,21 @@ namespace KLog.Api
             KLogContext.SetTriggers();
 
             // ************************************ //
+            //              CORS Setup              //
+            // ************************************ //
+            if(settings.CORS != null)
+                services.AddCors(options =>
+                {
+                    options.AddPolicy(
+                        "CorsPolicy",
+                        builder => builder.WithOrigins(settings.CORS)
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                    );
+                });
+
+
+            // ************************************ //
             //   Authentication and Authorization   //
             // ************************************ //
 
@@ -95,6 +110,8 @@ namespace KLog.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors("CorsPolicy");
 
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "KLog.Api v1"));

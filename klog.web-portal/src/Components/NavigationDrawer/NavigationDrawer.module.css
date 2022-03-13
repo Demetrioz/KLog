@@ -1,0 +1,13 @@
+.header {
+  margin-top: 64px;
+}
+
+.logo {
+  display: block;
+  margin: 16px auto;
+  width: 225px;
+}
+
+.spacer {
+  flex-grow: 1;
+}
