@@ -27,7 +27,7 @@ namespace KLog.DataModel.Entities
         [JsonConverter(typeof(LogLevelConverter))]
         public LogLevel Level { get; set; }
 
-        public string Source { get; set; }
+        public string? Source { get; set; }
         public string? Subject { get; set; }
         public string? Component { get; set; }
 

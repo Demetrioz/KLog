@@ -24,7 +24,10 @@ namespace KLog.Api.Services
         {
             // Generate salt
             byte[] salt;
-            new RNGCryptoServiceProvider().GetBytes(salt = new byte[16]);
+
+            // replaced RNGCryptoServiceProvider().GetBytes(salt = new byte[16]);
+            salt = RandomNumberGenerator.GetBytes(16);
+
             byte[] pbkdf2 = KeyDerivation.Pbkdf2(key, salt, KeyDerivationPrf.HMACSHA256, 10000, 20);
 
             // Combine the two 

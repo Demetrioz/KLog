@@ -1,7 +1,12 @@
-﻿using KLog.DataModel.Context;
+﻿using KLog.Api.Core;
+using KLog.Api.Core.Queries;
+using KLog.DataModel.Context;
 using KLog.DataModel.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace KLog.Api.Controllers
 {
@@ -33,22 +38,53 @@ namespace KLog.Api.Controllers
         /// <response code="201">Returns the newly created log</response>
         /// <response code="401">If the application's API key is missing or incorrect</response>
         [HttpPost]
+        [Authorize(AuthenticationSchemes = "ApiKey")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public IActionResult PostLog([FromBody] Log newLog)
+        public async Task<IActionResult> PostLog([FromBody] Log newLog)
         {
-            return new OkResult();
+            if(newLog.Source == null)
+                newLog.Source = User.Identity.Name;
+
+            await DbContext.AddAsync(newLog);
+            await DbContext.SaveChangesAsync();
+
+            return ApiResponse.Created(newLog);
         }
 
+        /// <summary>
+        /// Retrieves a paginated list of logs, based on the query parameters
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns>A paginated list of logs and page information</returns>
+        /// <response code="200">Returns a list of logs, ordered by timestamp</response>
         [HttpGet]
-        public IActionResult GetLog()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IActionResult GetLogs([FromQuery] LogQueryParams query)
         {
-            return new OkObjectResult(new Log
-            {
-                LogId = 1,
-                Level = LogLevel.Critical,
-                Message = "Testing"
-            });
+            IQueryable<Log> logs = DbContext.Logs.AsQueryable();
+
+            if (!string.IsNullOrEmpty(query.Source))
+                logs = logs.Where(l => l.Source == query.Source);
+
+            if (query.LogLevel != null)
+                logs = logs.Where(l => l.Level == query.LogLevel);
+
+            if (query.StartTime != null)
+                logs = logs.Where(l => l.Timestamp >= query.StartTime);
+
+            if (query.StopTime != null)
+                logs = logs.Where(l => l.Timestamp <= query.StopTime);
+
+            logs = logs.OrderBy(l => l.Timestamp);
+
+            PaginatedResult<Log> result = ToPaginatedResult(
+                logs,
+                query.Page,
+                query.PageSize
+            );
+
+            return ApiResponse.Success(result);
         }
     }
 }
