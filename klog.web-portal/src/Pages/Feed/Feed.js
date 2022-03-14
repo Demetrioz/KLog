@@ -63,7 +63,7 @@ function Feed() {
     };
 
     loadRecentLogs();
-  }, []);
+  }, [enqueueSnackbar]);
 
   const handleFilterClick = (event) => {
     setFilterAnchor(event.currentTarget);
@@ -79,7 +79,7 @@ function Feed() {
   };
 
   const handleSearch = (event) => {
-    if (event.key == "Enter")
+    if (event.key === "Enter")
       if (event.target.value === "") setFilteredLogs(logs);
       else search(event.target.value);
   };

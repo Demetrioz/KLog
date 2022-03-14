@@ -1,6 +1,10 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { useMediaQuery } from "react-responsive";
+
+import { initialUserState, setUser } from "../../Redux/UserSlice";
+import { LOGIN_STATE, setLoginState } from "../../Redux/AppSlice";
 
 import Drawer from "@mui/material/Drawer";
 import Divider from "@mui/material/Divider";
@@ -19,6 +23,7 @@ import Style from "./NavigationDrawer.module.css";
 
 function NavigationDrawer(props) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const isNarrow = useMediaQuery({
     query: `(max-width: ${Settings.smallWidth}px)`,
   });
@@ -29,7 +34,11 @@ function NavigationDrawer(props) {
     if (props.onClose) props.onClose();
   };
 
-  const handleLogout = async () => {};
+  const handleLogout = () => {
+    dispatch(setLoginState(LOGIN_STATE.LOGIN));
+    dispatch(setUser(initialUserState));
+    navigate("/");
+  };
 
   const drawerVariant = isNarrow ? "temporary" : "permanent";
 

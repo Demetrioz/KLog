@@ -13,12 +13,12 @@ namespace KLog.Api.Controllers
     [Route("api/applications")]
     public class ApplicationController : KLogController
     {
-        private readonly ISecurityService SecurityService;
+        private readonly IAuthenticationService AuthService;
 
-        public ApplicationController(KLogContext context, ISecurityService securityService) 
+        public ApplicationController(KLogContext context, IAuthenticationService authService) 
             : base(context) 
         { 
-            SecurityService = securityService;
+            AuthService = authService;
         }
 
         /// <summary>
@@ -49,10 +49,10 @@ namespace KLog.Api.Controllers
             if (existingApplication != null)
                 return ApiResponse.Conflict("Application name is in use");
 
-            (string prefix, string key) = SecurityService.GenerateKey();
+            (string prefix, string key) = AuthService.GenerateApiKey();
 
             string plainKey = $"{prefix}.{key}";
-            string hashedKey = SecurityService.GenerateKeyHash(plainKey);
+            string hashedKey = AuthService.GenerateHash(plainKey);
 
             Application newApp = new Application
             {

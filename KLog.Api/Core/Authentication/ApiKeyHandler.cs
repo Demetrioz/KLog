@@ -1,5 +1,4 @@
-﻿using KLog.Api.Services;
-using KLog.DataModel.Context;
+﻿using KLog.DataModel.Context;
 using KLog.DataModel.Entities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
@@ -16,7 +15,7 @@ namespace KLog.Api.Core.Authentication
     public class ApiKeyHandler : AuthenticationHandler<ApiKeyOptions>
     {
         private readonly IHttpContextAccessor HttpContextAccessor;
-        private readonly ISecurityService SecurityService;
+        private readonly Services.IAuthenticationService SecurityService;
         private readonly KLogContext DbContext;
 
         public ApiKeyHandler(
@@ -25,7 +24,7 @@ namespace KLog.Api.Core.Authentication
             UrlEncoder encoder,
             ISystemClock clock,
             IHttpContextAccessor httpContextAccessor,
-            ISecurityService securityService,
+            Services.IAuthenticationService securityService,
             KLogContext context
         ) : base(options, logger, encoder, clock)
         {
@@ -52,7 +51,7 @@ namespace KLog.Api.Core.Authentication
                 .Where(a => a.Id == prefix)
                 .FirstOrDefaultAsync();
 
-            if (app != null && SecurityService.ValidateKey(app.Key, apiKey))
+            if (app != null && SecurityService.ValidateHash(app.Key, apiKey))
             {
                 Claim[] claims = new[] { new Claim(ClaimTypes.Name, app.Name) };
                 ClaimsIdentity identity = new ClaimsIdentity(claims, Scheme.Name);

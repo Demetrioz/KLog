@@ -11,6 +11,7 @@ namespace KLog.DataModel.Context
         public KLogContext(DbContextOptions<KLogContext> options) : base(options) { }
 
         public DbSet<Application> Applications { get; set; }
+        public DbSet<User> Users { get; set; }
         public DbSet<Log> Logs { get; set; }
 
         public static void SetTriggers()

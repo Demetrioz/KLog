@@ -11,5 +11,6 @@ namespace KLog.DataModel.Entities
         public string Name { get; set; }
         public string Id { get; set; }
         public string Key { get; set; }
+        public int UserId { get; set; }
     }
 }

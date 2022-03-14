@@ -5,17 +5,20 @@ using KLog.Api.Services;
 using KLog.DataModel.Context;
 using KLog.DataModel.Migrations;
 using KLog.DataModel.Migrations.Releases.Release_001;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Text;
 
 namespace KLog.Api
 {
@@ -38,7 +41,11 @@ namespace KLog.Api
             //        Make settings available       //
             // ************************************ //
             AppSettings settings = new AppSettings();
+            SecuritySettings securitySettings = new SecuritySettings();
             Configuration.GetSection("AppSettings").Bind(settings);
+            Configuration.GetSection("SecuritySettings").Bind(securitySettings);
+
+            services.Configure<SecuritySettings>(Configuration.GetSection("SecuritySettings"));
 
             // ************************************ //
             //            Database Setup            //
@@ -67,18 +74,40 @@ namespace KLog.Api
                     );
                 });
 
-
             // ************************************ //
             //   Authentication and Authorization   //
             // ************************************ //
 
             services.AddAuthentication()
+                .AddJwtBearer("JWT", options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+
+                        ValidIssuer = securitySettings.Issuer,
+                        ValidAudience = securitySettings.Audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(securitySettings.SecretKey))
+                    };
+                })
                 .AddScheme<ApiKeyOptions, ApiKeyHandler>("ApiKey", null);
+
+            services.AddAuthorization(options =>
+            {
+                options.DefaultPolicy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .AddAuthenticationSchemes("JWT", "ApiKey")
+                    .Build();
+            });
 
             // ************************************ //
             //          Additional Services         //
             // ************************************ //
-            services.AddTransient<ISecurityService, SecurityService>();
+            services.AddTransient<IAuthenticationService, AuthenticationService>();
 
             services.AddHttpContextAccessor();
 
@@ -120,6 +149,7 @@ namespace KLog.Api
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

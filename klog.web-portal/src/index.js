@@ -1,11 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { Provider } from "react-redux";
 
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { SnackbarProvider } from "notistack";
 import Slide from "@mui/material/Slide";
 
 import App from "./App";
+import Store from "./Redux/Store";
 
 import reportWebVitals from "./reportWebVitals";
 
@@ -32,16 +34,18 @@ const theme = createTheme({
 });
 
 ReactDOM.render(
-  <ThemeProvider theme={theme}>
-    <SnackbarProvider
-      maxSnack={3}
-      autoHideDuration={2000}
-      TransitionComponent={Slide}
-      anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-    >
-      <App />
-    </SnackbarProvider>
-  </ThemeProvider>,
+  <Provider store={Store}>
+    <ThemeProvider theme={theme}>
+      <SnackbarProvider
+        maxSnack={3}
+        autoHideDuration={2000}
+        TransitionComponent={Slide}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <App />
+      </SnackbarProvider>
+    </ThemeProvider>
+  </Provider>,
   document.getElementById("root")
 );
 

@@ -12,6 +12,17 @@ namespace KLog.DataModel.Migrations.Releases.Release_001
                 .WithColumn("Name").AsString(255).NotNullable()
                 .WithColumn("Id").AsString(8).NotNullable()
                 .WithColumn("Key").AsString(255).NotNullable()
+                .WithColumn("UserId").AsInt32().NotNullable()
+                .WithKLogBase();
+
+            Create.Table("User")
+                .WithId("UserId")
+                .WithColumn("Username").AsString(255).NotNullable()
+                .WithColumn("Password").AsString(255).NotNullable()
+                .WithColumn("Email").AsString(255).Nullable()
+                .WithColumn("Phone").AsString(11).Nullable()
+                .WithColumn("ResetRequired").AsBoolean().NotNullable()
+                .WithColumn("LastLogin").AsDateTimeOffset().NotNullable()
                 .WithKLogBase();
 
             Create.Table("Log")

@@ -5,13 +5,12 @@ class KLogApiService {
   static userToken = null;
 
   static Logs = require("./KLogApi/Logs");
+  static Auth = require("./KLogApi/Auth");
 
   static async request(uri, body, method) {
-    if (this.apiUrl === null) this.initialize();
-
     let headers = {
       "Content-Type": "application/json",
-      //Authorization: `Bearer ${this.userToken}`,
+      Authorization: `Bearer ${this.userToken}`,
     };
 
     let options = {

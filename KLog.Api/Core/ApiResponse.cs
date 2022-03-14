@@ -43,5 +43,13 @@ namespace KLog.Api.Core
                 Data = null,
                 Error = "Unauthorized"
             });
+
+        public static IActionResult BadRequest(string error) =>
+            new BadRequestObjectResult(new KLogApiResponse
+            {
+                RequestId = Guid.NewGuid(),
+                Data = null,
+                Error = error
+            });
     }
 }
