@@ -6,6 +6,7 @@ class KLogApiService {
 
   static Logs = require("./KLogApi/Logs");
   static Auth = require("./KLogApi/Auth");
+  static Keys = require("./KLogApi/Keys");
 
   static async request(uri, body, method) {
     let headers = {

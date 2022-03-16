@@ -57,6 +57,7 @@ namespace KLog.Api.Services
             {
                 new Claim("sub", user.UserId.ToString()),
                 new Claim("name", user.Username),
+                new Claim("authentication_method", "JWT"),
                 new Claim("reset_required", user.ResetRequired.ToString())
             };
 
@@ -64,7 +65,7 @@ namespace KLog.Api.Services
                 claims.Add(new Claim("email", user.Email));
 
             if (!string.IsNullOrEmpty(user.Phone))
-                claims.Add(new Claim("phone_number", user.Phone));
+                claims.Add(new Claim("phone", user.Phone));
 
             JwtSecurityToken tokenOptions = new JwtSecurityToken(
                 issuer: Settings.Issuer,

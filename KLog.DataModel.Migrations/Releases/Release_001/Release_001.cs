@@ -9,10 +9,10 @@ namespace KLog.DataModel.Migrations.Releases.Release_001
         {
             Create.Table("Application")
                 .WithId("ApplicationId")
+                .WithColumn("UserId").AsInt32().NotNullable()
                 .WithColumn("Name").AsString(255).NotNullable()
                 .WithColumn("Id").AsString(8).NotNullable()
                 .WithColumn("Key").AsString(255).NotNullable()
-                .WithColumn("UserId").AsInt32().NotNullable()
                 .WithKLogBase();
 
             Create.Table("User")

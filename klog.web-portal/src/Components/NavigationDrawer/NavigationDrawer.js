@@ -37,7 +37,7 @@ function NavigationDrawer(props) {
   const handleLogout = () => {
     dispatch(setLoginState(LOGIN_STATE.LOGIN));
     dispatch(setUser(initialUserState));
-    navigate("/");
+    navigate("");
   };
 
   const drawerVariant = isNarrow ? "temporary" : "permanent";
@@ -66,7 +66,7 @@ function NavigationDrawer(props) {
         <NavigationButton
           icon={<KeyIcon />}
           text="Api Keys"
-          onClick={() => handleNavigation("users")}
+          onClick={() => handleNavigation("keys")}
         />
       </List>
       <div id="spacer" className={Style.spacer}></div>

@@ -53,7 +53,12 @@ namespace KLog.Api.Core.Authentication
 
             if (app != null && SecurityService.ValidateHash(app.Key, apiKey))
             {
-                Claim[] claims = new[] { new Claim(ClaimTypes.Name, app.Name) };
+                Claim[] claims = new[] 
+                {
+                    new Claim("sub", app.ApplicationId.ToString()),
+                    new Claim("name", app.Name),
+                    new Claim("authentication_method", "ApiKey")
+                };
                 ClaimsIdentity identity = new ClaimsIdentity(claims, Scheme.Name);
                 ClaimsPrincipal principal = new ClaimsPrincipal(identity);
                 AuthenticationTicket ticket = new AuthenticationTicket(principal, Scheme.Name);

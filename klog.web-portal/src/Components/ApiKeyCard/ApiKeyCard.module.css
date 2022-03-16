@@ -1,0 +1,6 @@
+.content_base {
+  display: flex;
+  flex-direction: column;
+  width: 100px;
+  overflow: visible;
+}

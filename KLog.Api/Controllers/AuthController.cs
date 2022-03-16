@@ -3,6 +3,7 @@ using KLog.Api.Services;
 using KLog.DataModel.Context;
 using KLog.DataModel.DTOs;
 using KLog.DataModel.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -24,7 +25,19 @@ namespace KLog.Api.Controllers
             AuthService = authService;
         }
 
+        /// <summary>
+        /// Provides a new private / public keypair in XML format
+        /// </summary>
+        /// <returns>A newly generated private / public RSA keypair in XML format</returns>
+        /// <remarks>
+        /// Sample Request: 
+        /// 
+        ///     POST /api/authentication/keypair
+        ///     
+        /// </remarks>
+        /// <response code="200">Returns the generated keypair</response>
         [HttpPost("keypair")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult GenerateKeyPair()
         {
             using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider())
@@ -40,13 +53,46 @@ namespace KLog.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Returns a public key that can be used by a web client
+        /// </summary>
+        /// <returns>A public RSA key</returns>
+        /// <remarks>
+        /// Sample Request:
+        /// 
+        ///     POST /api/key
+        ///     
+        /// </remarks>
+        /// <response code="200">Returns a generated public key</response>
         [HttpPost("key")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult GetPublicKey()
         {
             return ApiResponse.Success(AuthService.GeneratePublicKey());
         }
 
+        /// <summary>
+        /// Creates a new user and returns a jwt
+        /// </summary>
+        /// <param name="registration">An object containing an encrypted username and password</param>
+        /// <returns>A jwt that can be used for authentication</returns>
+        /// <remarks>
+        /// Sample Request:
+        /// 
+        ///     POST /api/authentication/register
+        ///     {
+        ///         username: "myEncryptedUsername",
+        ///         password: "myEncryptedPassword"
+        ///     }
+        ///     
+        /// </remarks>
+        /// <response code="200">Returns a jwt for the newly created user</response>
+        /// <response code="400">If the username or password is missing</response>
+        /// <response code="409">If a duplicate user exists</response>
         [HttpPost("register")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<IActionResult> Register([FromBody] Login registration)
         {
             if (
@@ -77,20 +123,33 @@ namespace KLog.Api.Controllers
                 LastLogin = DateTimeOffset.Now,
             };
 
-            try
-            {
-                await DbContext.AddAsync(newUser);
-                await DbContext.SaveChangesAsync();
-                return ApiResponse.Success(AuthService.GenerateJwt(newUser));
-            }
-            catch(Exception ex)
-            {
-                var pause = true;
-                return ApiResponse.Success(true);
-            }
+            await DbContext.AddAsync(newUser);
+            await DbContext.SaveChangesAsync();
+            return ApiResponse.Success(AuthService.GenerateJwt(newUser));
         }
 
+        /// <summary>
+        /// Authenticates a user and returns a jwt
+        /// </summary>
+        /// <param name="login">An object containing an encrypted username and password</param>
+        /// <returns>A jwt that can be used for authentication</returns>
+        /// <remarks>
+        /// Sample Request:
+        /// 
+        ///     POST /api/authentication/login
+        ///     {
+        ///         "username": "myEncryptedUsername",
+        ///         "password": "myEncryptedPassword"
+        ///     }
+        ///     
+        /// </remarks>
+        /// <response code="200">Returns the generated jwt</response>
+        /// <response code="400">If a username or password is not provided</response>
+        /// <response code="401">If the provided username and password cannot be authenticated</response>
         [HttpPost("login")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> Login([FromBody] Login login)
         {
             if (

@@ -8,9 +8,9 @@ namespace KLog.DataModel.Entities
     {
         [Key]
         public int ApplicationId { get; set; }
+        public int UserId { get; set; }
         public string Name { get; set; }
         public string Id { get; set; }
         public string Key { get; set; }
-        public int UserId { get; set; }
     }
 }

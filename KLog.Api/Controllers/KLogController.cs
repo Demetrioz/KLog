@@ -4,6 +4,7 @@ using KLog.DataModel.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
+using System.Security.Claims;
 
 namespace KLog.Api.Controllers
 {
@@ -33,6 +34,23 @@ namespace KLog.Api.Controllers
 
             return PaginatedResult<T>
                 .ToPaginatedResult(items, pageNumber, pageSize, requestUrl);
+        }
+
+        protected (int, bool) RetrieveUserId()
+        {
+            string stringId = User.Claims
+                .Where(c => c.Type == "sub" || c.Type == ClaimTypes.NameIdentifier)
+                .Select(c => c.Value)
+                .FirstOrDefault();
+
+            string authScheme = User.Claims
+                .Where(c => c.Type == "authentication_method")
+                .Select(c => c.Value)
+                .FirstOrDefault();
+
+            int.TryParse(stringId, out int userId);
+
+            return (userId, authScheme == "ApiKey");
         }
     }
 }
