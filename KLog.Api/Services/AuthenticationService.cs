@@ -55,6 +55,7 @@ namespace KLog.Api.Services
 
             List<Claim> claims = new List<Claim>
             {
+                new Claim(ClaimTypes.Name, user.Username),
                 new Claim("sub", user.UserId.ToString()),
                 new Claim("name", user.Username),
                 new Claim("authentication_method", "JWT"),
@@ -77,6 +78,12 @@ namespace KLog.Api.Services
 
             JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
             return handler.WriteToken(tokenOptions);
+        }
+
+        public JwtSecurityToken DecodeJwt(string jwt)
+        {
+            JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
+            return handler.ReadJwtToken(jwt);
         }
 
         public string GenerateHash(string key)

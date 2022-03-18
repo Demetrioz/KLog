@@ -57,7 +57,8 @@ namespace KLog.Api.Core.Authentication
                 {
                     new Claim("sub", app.ApplicationId.ToString()),
                     new Claim("name", app.Name),
-                    new Claim("authentication_method", "ApiKey")
+                    new Claim("authentication_method", "ApiKey"),
+                    new Claim(ClaimTypes.Name, app.Name),
                 };
                 ClaimsIdentity identity = new ClaimsIdentity(claims, Scheme.Name);
                 ClaimsPrincipal principal = new ClaimsPrincipal(identity);

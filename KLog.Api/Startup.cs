@@ -1,17 +1,21 @@
 using FluentMigrator.Runner;
 using KLog.Api.Config;
 using KLog.Api.Core.Authentication;
+using KLog.Api.Hubs;
 using KLog.Api.Services;
 using KLog.DataModel.Context;
 using KLog.DataModel.Migrations;
 using KLog.DataModel.Migrations.Releases.Release_001;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
@@ -19,6 +23,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace KLog.Api
 {
@@ -71,6 +76,7 @@ namespace KLog.Api
                         builder => builder.WithOrigins(settings.CORS)
                         .AllowAnyMethod()
                         .AllowAnyHeader()
+                        .AllowCredentials()
                     );
                 });
 
@@ -93,6 +99,11 @@ namespace KLog.Api
                         IssuerSigningKey = new SymmetricSecurityKey(
                             Encoding.UTF8.GetBytes(securitySettings.SecretKey))
                     };
+
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = HandleMessageReceived
+                    };
                 })
                 .AddScheme<ApiKeyOptions, ApiKeyHandler>("ApiKey", null);
 
@@ -103,6 +114,12 @@ namespace KLog.Api
                     .AddAuthenticationSchemes("JWT", "ApiKey")
                     .Build();
             });
+
+            // ************************************ //
+            //                SignalR               //
+            // ************************************ //
+            services.AddSignalR()
+                .AddNewtonsoftJsonProtocol();
 
             // ************************************ //
             //          Additional Services         //
@@ -121,7 +138,6 @@ namespace KLog.Api
                 string xmlFileName = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFileName));
             });
-
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider provider)
@@ -152,10 +168,24 @@ namespace KLog.Api
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UseWebSockets();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<LogHub>("/logHub");
             });
+        }
+
+        public Task HandleMessageReceived(MessageReceivedContext context)
+        {
+            StringValues accessToken = context.Request.Query["access_token"];
+            PathString path = context.HttpContext.Request.Path;
+
+            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/logHub"))
+                context.Token = accessToken;
+
+            return Task.CompletedTask;
         }
     }
 }

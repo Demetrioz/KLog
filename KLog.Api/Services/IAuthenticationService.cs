@@ -1,4 +1,5 @@
 ﻿using KLog.DataModel.Entities;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace KLog.Api.Services
 {
@@ -7,6 +8,7 @@ namespace KLog.Api.Services
         (string, string) GenerateApiKey();
         string GeneratePublicKey();
         string GenerateJwt(User user);
+        JwtSecurityToken DecodeJwt(string jwt);
 
         string GenerateHash(string key);
         bool ValidateHash(string hashedKey, string plainKey);

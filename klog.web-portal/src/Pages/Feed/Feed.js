@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
+import { clone } from "lodash";
 
 import Checkbox from "@mui/material/Checkbox";
 import IconButton from "@mui/material/IconButton";
@@ -15,11 +16,14 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import BasePage from "../BasePage/BasePage";
 
 import KLogApiService from "../../Services/KLogApiService";
+import SignalRService from "../../Services/SignalRService";
+import { useAsyncRef } from "../../Utilities/Hooks";
 
 function Feed() {
   const { enqueueSnackbar } = useSnackbar();
 
-  const [logs, setLogs] = useState([]);
+  const [logs, setLogs] = useAsyncRef([]);
+  const [searchString, setSearchString] = useAsyncRef("");
   const [filteredLogs, setFilteredLogs] = useState([]);
 
   const [sourceFilter, setSourceFilter] = useState(true);
@@ -37,6 +41,8 @@ function Feed() {
   const filterOpen = Boolean(filterAnchor);
   const visibilityOpen = Boolean(visibilityAnchor);
 
+  // Put the most recent logs on top. The div's direction (column-reverse)
+  // will then put the newest on the bottom and always scroll, as intended
   const logLines = filteredLogs
     .sort((a, b) => a.timestamp < b.timestamp)
     .map((log) => (
@@ -48,6 +54,31 @@ function Feed() {
     ));
 
   useEffect(() => {
+    const connectToHub = async () => {
+      try {
+        SignalRService.connect("logHub");
+        SignalRService.register("logHub", "PublishLog", handleNewLog);
+        await SignalRService.start("logHub");
+      } catch (e) {
+        enqueueSnackbar(e.message, { variant: "error" });
+      }
+    };
+
+    const disconnectFromHub = async () => {
+      try {
+        await SignalRService.stop("logHub");
+      } catch (e) {
+        enqueueSnackbar(e.message, { variant: "error" });
+      }
+    };
+
+    const handleNewLog = (log) => {
+      let updatedLogs = clone(logs.current);
+      updatedLogs.push(log);
+      setLogs(updatedLogs);
+      handleSearch({ key: "Enter", target: { value: searchString.current } });
+    };
+
     const loadRecentLogs = async () => {
       try {
         let logs = await KLogApiService.Logs.getMostRecentLogs();
@@ -62,8 +93,11 @@ function Feed() {
       }
     };
 
+    connectToHub();
     loadRecentLogs();
-  }, [enqueueSnackbar]);
+
+    return disconnectFromHub;
+  }, [enqueueSnackbar, handleSearch, logs, searchString, setLogs]);
 
   const handleFilterClick = (event) => {
     setFilterAnchor(event.currentTarget);
@@ -80,15 +114,18 @@ function Feed() {
 
   const handleSearch = (event) => {
     if (event.key === "Enter")
-      if (event.target.value === "") setFilteredLogs(logs);
-      else search(event.target.value);
+      if (event.target.value === "") {
+        setFilteredLogs(logs.current);
+        setSearchString(event.target.value);
+      } else search(event.target.value);
   };
 
   const search = (searchString) => {
+    setSearchString(searchString);
     let target = searchString.toLowerCase();
     let searchResults = [];
 
-    logs.forEach((log) => {
+    logs.current.forEach((log) => {
       let logSource = log.source?.toLowerCase() ?? "";
       let logSubject = log.subject?.toLowerCase() ?? "";
       let logLevel = log.level?.toLowerCase() ?? "";
@@ -115,7 +152,16 @@ function Feed() {
           style={{ height: "100%", display: "flex", flexDirection: "column" }}
         >
           <div id="spacer" style={{ flexGrow: 1 }}></div>
-          {logLines}
+          <div
+            id="logs"
+            style={{
+              overflowY: "auto",
+              display: "flex",
+              flexDirection: "column-reverse",
+            }}
+          >
+            {logLines}
+          </div>
           <TextField
             id="search"
             variant="outlined"

@@ -10,6 +10,7 @@ namespace KLog.Api.Core.Queries
         private int _page = 1;
 
         public string Source { get; set; }
+        public bool MostRecent { get; set; } = true;
         public LogLevel? LogLevel { get; set; }
         public DateTimeOffset? StartTime { get; set; }
         public DateTimeOffset? StopTime { get; set; }

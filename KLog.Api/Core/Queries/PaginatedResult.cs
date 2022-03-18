@@ -1,5 +1,6 @@
 ﻿using KLog.DataModel.Entities;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -72,8 +73,11 @@ namespace KLog.Api.Core.Queries
         {
             string[] urlParts = currentUrl.Split("?");
             string url = urlParts[0];
-            string queryString = urlParts[1];
-            var queryParams = QueryHelpers.ParseQuery(queryString);
+            string queryString = urlParts.Count() > 1 ?urlParts[1] : "";
+
+            Dictionary<string, StringValues> queryParams = QueryHelpers.ParseQuery(queryString);
+            if (!queryParams.TryGetValue("page", out StringValues page))
+                queryParams.Add("page", CurrentPage.ToString());
 
             if (!next && HasPreviousPage)
             {
