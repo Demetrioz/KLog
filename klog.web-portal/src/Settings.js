@@ -1,13 +1,13 @@
 class Settings {
+  static version = "0.1.0";
+
   static smallWidth = 600;
   static mediumWidth = 1200;
 
   static getApiUrl() {
-    let urlMap = {
-      localhost: "https://localhost:44314/api/",
-    };
-
-    return urlMap[window.location.hostname];
+    return window.location.port === 3000
+      ? "https://localhost:44314/api/"
+      : `https://${window.location.hostname}:${window.location.port}/api/`;
   }
 }
 

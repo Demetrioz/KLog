@@ -12,6 +12,7 @@ import Store from "./Redux/Store";
 import reportWebVitals from "./reportWebVitals";
 
 import "./index.css";
+import Settings from "./Settings";
 
 const theme = createTheme({
   palette: {
@@ -48,6 +49,8 @@ ReactDOM.render(
   </Provider>,
   document.getElementById("root")
 );
+
+document.title = `KLog - v${Settings.version}`;
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

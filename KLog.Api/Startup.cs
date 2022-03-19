@@ -170,6 +170,9 @@ namespace KLog.Api
 
             app.UseWebSockets();
 
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

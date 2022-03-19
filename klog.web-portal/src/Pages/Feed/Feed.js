@@ -14,6 +14,7 @@ import SearchIcon from "@mui/icons-material/SearchRounded";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 
 import BasePage from "../BasePage/BasePage";
+import LogLine from "../../Components/LogLine/LogLine";
 
 import KLogApiService from "../../Services/KLogApiService";
 import SignalRService from "../../Services/SignalRService";
@@ -46,11 +47,13 @@ function Feed() {
   const logLines = filteredLogs
     .sort((a, b) => a.timestamp < b.timestamp)
     .map((log) => (
-      <div key={log.logId}>
-        {log.timestamp} || {level && log.level + " || "}
-        {source && log.source + " || "}
-        {subject && log.subject + " || "} {message && log.message}
-      </div>
+      <LogLine
+        log={log}
+        showLevel={level}
+        showSource={source}
+        showSubject={subject}
+        showMessage={message}
+      />
     ));
 
   useEffect(() => {
@@ -97,7 +100,7 @@ function Feed() {
     loadRecentLogs();
 
     return disconnectFromHub;
-  }, [enqueueSnackbar, handleSearch, logs, searchString, setLogs]);
+  }, []);
 
   const handleFilterClick = (event) => {
     setFilterAnchor(event.currentTarget);
