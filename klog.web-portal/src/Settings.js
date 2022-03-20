@@ -5,7 +5,7 @@ class Settings {
   static mediumWidth = 1200;
 
   static getApiUrl() {
-    return window.location.port === 3000
+    return window.location.port === "3000"
       ? "https://localhost:44314/api/"
       : `https://${window.location.hostname}:${window.location.port}/api/`;
   }

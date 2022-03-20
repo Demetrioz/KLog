@@ -48,6 +48,7 @@ function Feed() {
     .sort((a, b) => a.timestamp < b.timestamp)
     .map((log) => (
       <LogLine
+        key={log.logId}
         log={log}
         showLevel={level}
         showSource={source}

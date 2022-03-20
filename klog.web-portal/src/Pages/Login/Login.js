@@ -14,7 +14,7 @@ import PasswordIcon from "@mui/icons-material/Lock";
 
 import KLogApiService from "../../Services/KLogApiService";
 
-// import Logo from "../../assets/img/logo.png";
+import Logo from "../../Assets/Img/Logo.png";
 
 import Style from "./Login.module.css";
 
@@ -68,7 +68,7 @@ function Login() {
   return (
     <div id="container" className={Style.container}>
       <div id="login_box" className={Style.login_box}>
-        {/* <img src={Logo} alt="PyFarm" className={Style.logo} /> */}
+        <img src={Logo} alt="KLog" className={Style.logo} />
         <div id="input" className={Style.input}>
           <TextField
             id="usernname"

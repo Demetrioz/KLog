@@ -19,7 +19,7 @@ import NavigationButton from "../NavigationButton/NavigationButton";
 import Settings from "../../Settings";
 
 import Style from "./NavigationDrawer.module.css";
-// import Logo from "../../assets/img/logo.png";
+import Logo from "../../Assets/Img/Logo.png";
 
 function NavigationDrawer(props) {
   const navigate = useNavigate();
@@ -54,7 +54,7 @@ function NavigationDrawer(props) {
       }}
     >
       <div className={Style.header}>
-        {/* <img src={Logo} alt="PyFarm" className={Style.logo} /> */}
+        <img src={Logo} alt="KLog" className={Style.logo} />
       </div>
       <Divider />
       <List>
