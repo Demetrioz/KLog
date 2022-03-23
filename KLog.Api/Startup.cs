@@ -125,6 +125,7 @@ namespace KLog.Api
             //          Additional Services         //
             // ************************************ //
             services.AddTransient<IAuthenticationService, AuthenticationService>();
+            services.AddTransient<IGitHubEventHandler, GitHubEventHandler>();
 
             services.AddHttpContextAccessor();
 

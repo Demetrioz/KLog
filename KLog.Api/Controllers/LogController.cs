@@ -48,7 +48,13 @@ namespace KLog.Api.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> PostLog([FromBody] Log newLog)
         {
+            (int userId, bool isApiKey) = RetrieveUserId();
+
+            if (!isApiKey)
+                return ApiResponse.Unauthorized();
+
             newLog.Source = User.Identity.Name;
+            newLog.ApplicationId = userId;
 
             await DbContext.AddAsync(newLog);
             await DbContext.SaveChangesAsync();
@@ -86,22 +92,30 @@ namespace KLog.Api.Controllers
             }
             else
             {
-                List<string> appNames = await DbContext.Applications
+                List<Application> applications = await DbContext.Applications
                     .AsNoTracking()
                     .Where(a => a.UserId == userId)
-                    .Select(a => a.Name)
                     .ToListAsync();
+
+                List<string> appNames = applications.Select(a => a.Name).ToList();
+                List<int> appIds = applications.Select(a => a.ApplicationId).ToList();
 
                 // If there is no query source, return logs from all api keys the user has created
                 if (string.IsNullOrEmpty(query.Source))
-                    logs = logs.Where(l => appNames.Contains(l.Source));
+                    logs = logs.Where(l => 
+                        appNames.Contains(l.Source) 
+                        && appIds.Contains(l.ApplicationId)
+                    );
 
                 // If there is a query source, and that source was created by the user, show them
                 else if (appNames.Contains(query.Source))
-                    logs = logs.Where(l => l.Source == query.Source);
+                    logs = logs.Where(l => 
+                        l.Source == query.Source
+                        && appIds.Contains(l.ApplicationId)
+                    );
 
                 // If we have a source, but it isn't one of the users, return nothing
-                // (All logs have a source from line 57)
+                // (All logs have a source from line 56)
                 else
                     logs = logs.Where(l => l.Source == null);
             }

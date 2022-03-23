@@ -3,7 +3,7 @@
 namespace KLog.DataModel.DTOs.GitHub
 {
     // https://docs.github.com/en/developers/webhooks-and-events/webhooks/webhook-events-and-payloads
-    public class GitHubEvent
+    public class GitHubEvent : IGithubEvent
     {
         /// <summary>
         /// The activity that triggered the event
@@ -15,7 +15,7 @@ namespace KLog.DataModel.DTOs.GitHub
         /// The user that triggered the event
         /// </summary>
         [JsonProperty("sender")]
-        public object Sender { get; set; }
+        public Owner Sender { get; set; }
 
         /// <summary>
         /// The repository where the event occured
