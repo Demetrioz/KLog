@@ -51,7 +51,7 @@ namespace KLog.Api.Controllers
 
             Application existingApplication = await DbContext.Applications
                 .AsNoTracking()
-                .Where(a => a.Name == appName)
+                .Where(a => a.Name == appName && a.UserId == userId)
                 .FirstOrDefaultAsync();
 
             if (existingApplication != null)
