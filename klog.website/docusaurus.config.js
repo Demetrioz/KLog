@@ -7,14 +7,16 @@ const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: "KLog",
-  tagline: "Simple Logging",
-  url: "https://your-docusaurus-test-site.com",
+  tagline: "Simple, developer-focused logging",
+  url: "https://klog.kevinwilliams.dev",
   baseUrl: "/",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
   favicon: "img/favicon.ico",
-  organizationName: "KTech-Industries", // Usually your GitHub org/user name.
-  projectName: "KLog", // Usually your repo name.
+  organizationName: "Demetrioz",
+  projectName: "KLog",
+  deploymentBranch: "gh-pages",
+  trailingSlash: false,
 
   presets: [
     [
@@ -23,14 +25,11 @@ const config = {
       ({
         docs: {
           sidebarPath: require.resolve("./sidebars.js"),
-          // Please change this to your repo.
-          editUrl: "https://github.com/KTech-Industries/KLog",
+          editUrl: "https://github.com/Demetrioz/KLog",
         },
         blog: {
           showReadingTime: true,
-          // Please change this to your repo.
-          editUrl:
-            "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/",
+          editUrl: "https://github.com/Demetrioz/KLog",
         },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
@@ -45,7 +44,7 @@ const config = {
       navbar: {
         title: "KLog",
         logo: {
-          alt: "My Site Logo",
+          alt: "KLog",
           src: "img/logo.png",
         },
         items: [
@@ -55,9 +54,9 @@ const config = {
             position: "left",
             label: "Documentation",
           },
-          { to: "/blog", label: "Blog", position: "left" },
+          // { to: "/blog", label: "Blog", position: "left" },
           {
-            href: "https://github.com/KTech-Industries/KLog",
+            href: "https://github.com/Demetrioz/KLog",
             label: "GitHub",
             position: "right",
           },
@@ -73,18 +72,22 @@ const config = {
                 label: "Introduction",
                 to: "/docs/introduction",
               },
+              {
+                label: "Build",
+                to: "docs/getting-started/build",
+              },
             ],
           },
           {
             title: "Community",
             items: [
               {
-                label: "Stack Overflow",
-                href: "https://stackoverflow.com/questions/tagged/docusaurus",
+                label: "Talkyard",
+                href: "https://talkyard.kevinwilliams.dev/",
               },
               {
                 label: "Discord",
-                href: "https://discordapp.com/invite/docusaurus",
+                href: "https://discord.gg/qEZDFqF6xg",
               },
             ],
           },
@@ -92,13 +95,17 @@ const config = {
             title: "More",
             items: [
               {
+                label: "kevinwilliams.dev",
+                href: "https://kevinwilliams.dev",
+              },
+              {
                 label: "GitHub",
-                href: "https://github.com/KTech-Industries/KLog",
+                href: "https://github.com/Demetrioz/KLog",
               },
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} KTech Industries / KLog. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} Kevin Williams. Built with Docusaurus.`,
       },
       prism: {
         theme: lightCodeTheme,

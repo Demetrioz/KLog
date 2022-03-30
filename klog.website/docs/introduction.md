@@ -6,7 +6,7 @@ sidebar_position: 1
 
 ## Welcome
 
-Welcome! And thank you for taking the time to look into and consider KLog!
+Welcome! And thank you for taking the time to consider KLog!
 
 The goal of KLog is to be a simple, developer focused logging system that's easy
 to setup and use. It's open source and can be found on
