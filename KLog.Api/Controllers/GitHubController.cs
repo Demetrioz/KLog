@@ -24,7 +24,18 @@ namespace KLog.Api.Controllers
 
         private readonly Dictionary<string, Type> GithubEventTypeMap = new Dictionary<string, Type>()
         {
-            { "ping", typeof(Ping) }
+            { "ping", typeof(Ping) },
+            { "code_scanning_alert", typeof(CodeScanAlert) },
+            { "commit_comment", typeof(CommitComment) },
+            { "create", typeof(Create) },
+            { "delete", typeof(Delete) },
+            { "fork", typeof(Fork) },
+            { "issue_comment", typeof(IssueComment) },
+            { "issues", typeof(Issues) },
+            { "label", typeof(LabelEvent) },
+            { "pull_request", typeof(PullRequestEvent) },
+            { "repository_vulnerability_alert", typeof(RepositoryVulnerability) },
+            { "star", typeof(Star) }
         };
 
         public GitHubController(
