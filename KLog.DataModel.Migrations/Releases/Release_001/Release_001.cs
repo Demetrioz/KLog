@@ -30,6 +30,7 @@ namespace KLog.DataModel.Migrations.Releases.Release_001
                 .WithColumn("Timestamp").AsDateTimeOffset().NotNullable()
                 .WithColumn("Level").AsInt32().NotNullable()
                 .WithColumn("Source").AsString(255).NotNullable()
+                .WithColumn("ApplicationId").AsInt32().NotNullable()
                 .WithColumn("Subject").AsString(255).Nullable()
                 .WithColumn("Component").AsString(255).Nullable()
                 .WithColumn("Message").AsString(int.MaxValue).NotNullable()

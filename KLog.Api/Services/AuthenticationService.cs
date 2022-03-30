@@ -1,26 +1,35 @@
 ﻿using KLog.Api.Config;
 using KLog.Api.Core;
+using KLog.DataModel.Context;
 using KLog.DataModel.Entities;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
+using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace KLog.Api.Services
 {
     public class AuthenticationService : IAuthenticationService
     {
         private readonly SecuritySettings Settings;
+        private readonly KLogContext DbContext;
 
-        public AuthenticationService(IOptions<SecuritySettings> options)
+        public AuthenticationService(
+            IOptions<SecuritySettings> options, 
+            KLogContext dbContext
+        )
         {
             Settings = options.Value;
+            DbContext = dbContext;
         }
 
         public (string, string) GenerateApiKey()
@@ -118,6 +127,44 @@ namespace KLog.Api.Services
                     return false;
 
             return true;
+        }
+
+        public async Task<int> ValidateGithubSignature(string text, string key)
+        {
+            // Figure out a better way to do this. Since we could have more than one
+            // user, and multiple users could integrate with GitHub, every time a
+            // github request shows up, we have to go through each GitHub application / key
+            // to see if the webhook signature is valid
+            int result = 0;
+            List<Application> dbGithubKeys = await DbContext.Applications
+                .AsNoTracking()
+                .Where(a => a.Name == "GitHub")
+                .ToListAsync();
+
+            for(int i = 0; i < dbGithubKeys.Count; i++)
+            {
+                ASCIIEncoding encoding = new ASCIIEncoding();
+                Byte[] textBytes = encoding.GetBytes(text);
+                Byte[] keyBytes = encoding.GetBytes(dbGithubKeys[i].Id);
+
+                Byte[] hashBytes;
+
+                using (HMACSHA256 hash = new HMACSHA256(keyBytes))
+                    hashBytes = hash.ComputeHash(textBytes);
+
+                string generatedKey = BitConverter
+                    .ToString(hashBytes)
+                    .Replace("-", "")
+                    .ToLower();
+
+                if(generatedKey == key)
+                {
+                    result = dbGithubKeys[i].ApplicationId;
+                    break;
+                };
+            }
+
+            return result;
         }
 
         public string Decrypt(string key)

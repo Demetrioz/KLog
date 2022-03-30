@@ -1,5 +1,6 @@
 ﻿using KLog.DataModel.Entities;
 using System.IdentityModel.Tokens.Jwt;
+using System.Threading.Tasks;
 
 namespace KLog.Api.Services
 {
@@ -12,6 +13,7 @@ namespace KLog.Api.Services
 
         string GenerateHash(string key);
         bool ValidateHash(string hashedKey, string plainKey);
+        Task<int> ValidateGithubSignature(string text, string key);
 
         string Decrypt(string key);
     }

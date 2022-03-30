@@ -12,5 +12,7 @@ namespace KLog.DataModel.Entities
         public string Name { get; set; }
         public string Id { get; set; }
         public string Key { get; set; }
+
+        public ICollection<Log> Logs { get; set; }
     }
 }
