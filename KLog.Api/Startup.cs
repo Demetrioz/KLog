@@ -55,8 +55,10 @@ namespace KLog.Api
             // ************************************ //
             //            Database Setup            //
             // ************************************ //
+            //services.AddDbContext<KLogContext>(options =>
+            //    options.UseSqlServer(settings.ConnectionStrings["KLog.Db"]));
             services.AddDbContext<KLogContext>(options =>
-                options.UseSqlServer(settings.ConnectionStrings["KLog.Db"]));
+                options.UseNpgsql(settings.ConnectionStrings["KLog.Db"]));
 
             services.AddMigrations(
                 settings.ConnectionStrings["KLog.Db"],

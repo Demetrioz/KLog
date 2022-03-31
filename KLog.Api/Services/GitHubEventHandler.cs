@@ -30,7 +30,7 @@ namespace KLog.Api.Services
         {
             Log baseLog = new Log
             {
-                Timestamp = DateTimeOffset.Now,
+                Timestamp = DateTimeOffset.UtcNow,
                 Level = EventLevel,
                 ApplicationId = appId,
                 Source = EventSource,

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -55,6 +56,7 @@ namespace KLog.Api.Controllers
 
             newLog.Source = User.Identity.Name;
             newLog.ApplicationId = userId;
+            newLog.Timestamp = newLog.Timestamp.ToUniversalTime();
 
             await DbContext.AddAsync(newLog);
             await DbContext.SaveChangesAsync();

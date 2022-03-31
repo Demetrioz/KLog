@@ -10,7 +10,7 @@ namespace KLog.DataModel.Triggers
             KLogBase entity = entry.Entity as KLogBase;
             if (entity != null)
             {
-                DateTimeOffset now = DateTimeOffset.Now;
+                DateTimeOffset now = DateTimeOffset.UtcNow;
 
                 SetCreated(entity, now);
                 SetModified(entity, now);
@@ -23,7 +23,7 @@ namespace KLog.DataModel.Triggers
             KLogBase entity = entry.Entity as KLogBase;
             if (entity != null)
             {
-                DateTimeOffset now = DateTimeOffset.Now;
+                DateTimeOffset now = DateTimeOffset.UtcNow;
 
                 SetModified(entity, now);
             }

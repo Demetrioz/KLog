@@ -44,7 +44,8 @@ namespace KLog.DataModel.Migrations
 
             return services.AddFluentMigratorCore()
                 .ConfigureRunner(rb =>
-                    rb.AddSqlServer()
+                    rb.AddPostgres()
+                    //rb.AddSqlServer()
                     .WithGlobalConnectionString(connectionString)
                     .ScanIn(assemblies).For.Migrations()
                 )

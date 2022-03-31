@@ -120,7 +120,7 @@ namespace KLog.Api.Controllers
                 Username = plainTextUser,
                 Password = AuthService.GenerateHash(plainTextPass),
                 ResetRequired = false,
-                LastLogin = DateTimeOffset.Now,
+                LastLogin = DateTimeOffset.UtcNow,
             };
 
             await DbContext.AddAsync(newUser);
@@ -171,7 +171,7 @@ namespace KLog.Api.Controllers
             if (dbUser == null || !AuthService.ValidateHash(dbUser.Password, plainTextPass))
                 return ApiResponse.Unauthorized();
 
-            dbUser.LastLogin = DateTimeOffset.Now;
+            dbUser.LastLogin = DateTimeOffset.UtcNow;
             await DbContext.SaveChangesAsync();
 
             return ApiResponse.Success(AuthService.GenerateJwt(dbUser));
