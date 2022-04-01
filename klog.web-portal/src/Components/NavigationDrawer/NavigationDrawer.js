@@ -11,6 +11,7 @@ import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 
 import FeedIcon from "@mui/icons-material/Stream";
+import SearchIcon from "@mui/icons-material/QueryStats";
 import KeyIcon from "@mui/icons-material/Key";
 import LogoutIcon from "@mui/icons-material/ExitToApp";
 
@@ -62,6 +63,11 @@ function NavigationDrawer(props) {
           icon={<FeedIcon />}
           text="Log Feed"
           onClick={() => handleNavigation("")}
+        />
+        <NavigationButton
+          icon={<SearchIcon />}
+          text="Investigate"
+          onClick={() => handleNavigation("search")}
         />
         <NavigationButton
           icon={<KeyIcon />}
