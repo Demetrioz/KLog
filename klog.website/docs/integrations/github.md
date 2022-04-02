@@ -9,12 +9,12 @@ utilizing it is fairly simple.
 
 1. Log in to KLog and create a new API Key named "GitHub"
 
-![GitHub](../assets/img/integrations/github.png)
+![GitHub](https://stkevinwilliamsdev.blob.core.windows.net/klog/github.PNG)
 
 2. Make note of the ID (the first part of the api key) that you get when
    hitting save. This will be used as the secret key within the GitHub webhook.
 
-![GitHubKey](../assets/img/integrations/github_apikey.PNG)
+![GitHubKey](https://stkevinwilliamsdev.blob.core.windows.net/klog/github_apikey.PNG)
 
 3. From GitHub, create a new webhook with the following settings:
 
@@ -23,7 +23,7 @@ utilizing it is fairly simple.
 - Secret: The ID from step 2
 - SSL verification: Enable SSL verification
 
-![GitHubWebhook](../assets/img/integrations/github_webhook.PNG)
+![GitHubWebhook](https://stkevinwilliamsdev.blob.core.windows.net/klog/github_webhook.PNG)
 
 4. Now, whenever the new webhook triggers, you should see the logs displayed
    within the KLog Feed!

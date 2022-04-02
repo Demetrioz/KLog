@@ -1,17 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
+import { DataGrid } from "@mui/x-data-grid";
+import { useTheme } from "@mui/material";
+import { find } from "lodash";
+import moment from "moment";
 
 import LogSearchBar from "../../Components/LogSearchBar/LogSearchBar";
 
 import BasePage from "../BasePage/BasePage";
 
 import KLogApiService from "../../Services/KLogApiService";
+import Style from "./Investigate.module.css";
 
 function Investigate() {
+  const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
 
   const [apps, setApps] = useState([]);
   const [selectedApps, setSelectedApps] = useState([]);
+  const [logs, setLogs] = useState([]);
 
   // Search / filter options
   const [sourceSearch, setSourceSearch] = useState(true);
@@ -19,11 +26,54 @@ function Investigate() {
   const [levelSearch, setLevelSearch] = useState(true);
   const [messageSearch, setMessageSearch] = useState(true);
 
-  // Visibility options
-  // const [source, setSource] = useState(true);
-  // const [subject, setSubject] = useState(true);
-  // const [level, setLevel] = useState(true);
-  // const [message, setMessage] = useState(true);
+  const columns = [
+    {
+      field: "applicationId",
+      headerName: "Application",
+      valueGetter: (params) => {
+        let app = find(apps, (a) => a.id === params.row.applicationId);
+        return app.text;
+      },
+    },
+    {
+      field: "level",
+      headerName: "Level",
+      renderCell: (params) => {
+        let text = "#000000";
+        let background = "#ffffff";
+
+        if (params.value === "Info") text = theme.palette.info.main;
+        if (params.value === "Warning") text = theme.palette.warning.main;
+        else if (params.value === "Error") text = theme.palette.error.main;
+        else if (params.value === "Critical") {
+          text = "#ffffff";
+          background = theme.palette.error.main;
+        }
+
+        return (
+          <div style={{ color: text, backgroundColor: background }}>
+            {params.value}
+          </div>
+        );
+      },
+    },
+    {
+      field: "timestamp",
+      headerName: "TimeStamp",
+      flex: 1,
+      valueGetter: (params) =>
+        moment(params.row.timestamp).format("MM/DD/YYYY HH:mm:ss Z"),
+    },
+    {
+      field: "component",
+      headerName: "Component",
+    },
+    {
+      field: "message",
+      headerName: "Message",
+      flex: 5,
+    },
+  ];
 
   useEffect(() => {
     const loadApps = async () => {
@@ -86,7 +136,18 @@ function Investigate() {
         fields.join(",")
       );
 
-      console.log("results", results);
+      let logs = results.items;
+      while (results.nextPageUrl) {
+        results = await KLogApiService.logs.getLogPage(results.nextPageUrl);
+        logs = logs.concat(results.items);
+      }
+
+      logs = logs.map((log) => {
+        log.id = log.logId;
+        return log;
+      });
+
+      setLogs(logs);
     } catch (e) {
       enqueueSnackbar(e.message, { variant: "error" });
     }
@@ -96,7 +157,7 @@ function Investigate() {
     <BasePage
       title="Investigate"
       content={
-        <div id="search_container">
+        <div id="search_container" className={Style.base}>
           <div id="search_input">
             <LogSearchBar
               showDatePickers
@@ -133,33 +194,10 @@ function Investigate() {
                   handler: setMessageSearch,
                 },
               ]}
-              // visibilityOptions={[
-              //   {
-              //     id: "source",
-              //     value: source,
-              //     text: "Source",
-              //     handler: setSource,
-              //   },
-              //   {
-              //     id: "subject",
-              //     value: subject,
-              //     text: "Subject",
-              //     handler: setSubject,
-              //   },
-              //   {
-              //     id: "level",
-              //     value: level,
-              //     text: "Level",
-              //     handler: setLevel,
-              //   },
-              //   {
-              //     id: "message",
-              //     value: message,
-              //     text: "Message",
-              //     handler: setMessage,
-              //   },
-              // ]}
             />
+          </div>
+          <div id="search_results" className={Style.flex_grow}>
+            <DataGrid columns={columns} rows={logs} density="compact" />
           </div>
         </div>
       }

@@ -1,8 +1,7 @@
 import KLogApiService from "../KLogApiService";
 
-export const getMostRecentLogs = async () => {
-  return await KLogApiService.request("logs", null, "GET");
-};
+export const getMostRecentLogs = async () =>
+  await KLogApiService.request("logs", null, "GET");
 
 export const getLogs = async (
   startTime,
@@ -17,6 +16,8 @@ export const getLogs = async (
   if (searchText) url += `&SearchText=${searchText}`;
   if (searchFields) url += `&SearchFields=${searchFields}`;
 
-  console.log("url:", url);
   return await KLogApiService.request(url, null, "GET");
 };
+
+export const getLogsByUrl = async (url) =>
+  await KLogApiService.request(url, null, "GET");

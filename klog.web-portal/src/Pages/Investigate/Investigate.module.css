@@ -1,0 +1,9 @@
+.base {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.flex_grow {
+  flex-grow: 1;
+}
