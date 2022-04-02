@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-// import { useSnackbar } from "notistack";
 import moment from "moment";
 
 import Button from "@mui/material/Button";
@@ -20,8 +19,6 @@ import SearchIcon from "@mui/icons-material/SearchRounded";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 
 function LogSearchBar(props) {
-  // const { enqueueSnackbar } = useSnackbar();
-
   const [begin, setBegin] = useState(moment().subtract(30, "days"));
   const [end, setEnd] = useState(moment());
 
