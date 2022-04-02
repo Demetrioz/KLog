@@ -29,7 +29,6 @@ function Investigate() {
     const loadApps = async () => {
       try {
         let apps = await KLogApiService.Keys.getApiKeys();
-        console.log("apps:", apps);
         let appOptions = apps.map((app) => {
           return { id: app.applicationId, text: app.name };
         });
@@ -42,7 +41,7 @@ function Investigate() {
     };
 
     loadApps();
-  }, []);
+  }, [enqueueSnackbar]);
 
   const handleAppChange = (event) => {
     const {
@@ -56,10 +55,41 @@ function Investigate() {
     return selectedText.join(", ");
   };
 
-  const handleSearch = (begin, end, text) => {
+  const handleSearch = async (begin, end, text) => {
     let ids = selectedApps.map((index) => apps[index].id);
-    console.log(`Searching the fields: source (${sourceSearch}), subject (${subjectSearch}), level (${levelSearch}), message (${messageSearch})
-    of logs from apps ${ids} for ${text} from ${begin} to ${end}`);
+    let fields = [];
+    let level = null;
+
+    [sourceSearch, subjectSearch, levelSearch, messageSearch].forEach(
+      (field, i) => {
+        if (i === 0 && field) fields.push("Source");
+        else if (i === 1 && field) fields.push("Subject");
+        else if (i === 2 && field) {
+          if (text.match("Info")) level = "Info";
+          else if (text.match("Warning")) level = "Warning";
+          else if (text.match("Error")) level = "Error";
+          else if (text.match("Critical")) level = "Critical";
+        } else if (i === 3 && field) fields.push("Message");
+      }
+    );
+
+    text = level ? text.split("//")[1] : text;
+    text = fields.length > 0 ? text : null;
+
+    try {
+      let results = await KLogApiService.Logs.getLogs(
+        begin.format("YYYY-MM-DD HH:mm:ss Z"),
+        end.format("YYYY-MM-DD HH:mm:ss Z"),
+        ids.join(","),
+        level,
+        text,
+        fields.join(",")
+      );
+
+      console.log("results", results);
+    } catch (e) {
+      enqueueSnackbar(e.message, { variant: "error" });
+    }
   };
 
   return (

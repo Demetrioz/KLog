@@ -1,5 +1,6 @@
 ﻿using KLog.Api.Core;
 using KLog.Api.Core.Queries;
+using KLog.Api.Extensions;
 using KLog.Api.Hubs;
 using KLog.DataModel.Context;
 using KLog.DataModel.Entities;
@@ -8,8 +9,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace KLog.Api.Controllers
@@ -107,17 +111,35 @@ namespace KLog.Api.Controllers
                         && appIds.Contains(l.ApplicationId)
                     );
 
-                // If there is a query source, and that source was created by the user, show them
-                else if (appNames.Contains(query.Source))
-                    logs = logs.Where(l => 
-                        l.Source == query.Source
-                        && appIds.Contains(l.ApplicationId)
-                    );
-
-                // If we have a source, but it isn't one of the users, return nothing
-                // (All logs have a source from line 56)
+                // If there is a query source, get all sources requested, as long as they were created
+                // by the user.
                 else
-                    logs = logs.Where(l => l.Source == null);
+                {
+                    List<string> sources = query.Source.Split(',').ToList();
+                    List<string> sourceNames = new List<string>();
+                    List<int> sourceIds = new List<int>();
+
+                    foreach(string source in sources)
+                    {
+                        if (int.TryParse(source, out int sourceInt))
+                            sourceIds.Add(sourceInt);
+                        else
+                            sourceNames.Add(source);
+                        
+                    }
+
+                    if (sourceNames.Count > 0)
+                        logs = logs.Where(l => 
+                            sourceNames.Contains(l.Source) 
+                            && appIds.Contains(l.ApplicationId)
+                        );
+
+                    if(sourceIds.Count > 0)
+                        logs = logs.Where(l => 
+                            sourceIds.Contains(l.ApplicationId) 
+                            && appIds.Contains(l.ApplicationId)
+                        );
+                }
             }
 
             if (query.LogLevel != null)
@@ -128,6 +150,49 @@ namespace KLog.Api.Controllers
 
             if (query.StopTime != null)
                 logs = logs.Where(l => l.Timestamp <= query.StopTime);
+
+            if(!string.IsNullOrEmpty(query.SearchText))
+            {
+                List<string> availableFields = typeof(Log)
+                         .GetProperties()
+                         .Where(p => p.PropertyType == typeof(string))
+                         .Select(p => p.Name)
+                         .ToList();
+
+                var searchFields = string.IsNullOrEmpty(query.SearchFields)
+                    ? availableFields
+                    : query.SearchFields
+                        .Split(",")
+                        .ToList();
+
+                List<Expression<Func<Log, bool>>> filters = new List<Expression<Func<Log, bool>>>();
+                try
+                {
+                    foreach (var field in searchFields)
+                    {
+                        if(availableFields.Contains(field))
+                        {
+                            // https://entityframeworkcore.com/knowledge-base/49003404/how-to-create-linq-expression-dynamically-in-csharp-for-contains
+                            MethodInfo method = typeof(string).GetMethod("Contains", new Type[] { typeof(string) });
+                            ParameterExpression parameter = Expression.Parameter(typeof(Log), "Log");
+                            MemberExpression member = Expression.Property(parameter, field);
+                            ConstantExpression constant = Expression.Constant(query.SearchText);
+                            Expression body = Expression.Call(member, method, constant);
+                            filters.Add(Expression.Lambda<Func<Log, bool>>(body, parameter));
+                        }
+                    }
+
+                    if(filters.Count > 0)
+                    {
+                        Expression<Func<Log, bool>> combinedFilters = filters.Aggregate((x, y) => x.OrElse(y));logs = logs.Where(combinedFilters);
+                        logs = logs.Where(combinedFilters);
+                    }
+                }
+                catch(Exception ex)
+                {
+                    var pause = true;
+                }
+            }
 
             logs = query.MostRecent
                 ? logs.OrderByDescending(l => l.Timestamp)
