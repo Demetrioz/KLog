@@ -11,10 +11,23 @@ is to simplify the steps as much as possible.
 
 ## IIS and SQL Server
 
+### From Source
+
 1. Create a Microsoft SQL database
 2. Build the project by following the directions in [Build Process](./build.md)
 3. Setup an IIS site
 4. Deploy the code from step 2, to the IIS directory
+5. Start the IIS site
+
+### Pre-built binaries (Windows only)
+
+1. Create a Microsoft SQL database
+2. Setup an IIS site
+3. Download the release files from [GitHub](https://github.com/), and extract
+   them to the IIS directory
+4. Create an appsettings.production.json mirroring step 3 from
+   [Build Process](./build.md)
+5. Start the IIS site
 
 ## Docker
 

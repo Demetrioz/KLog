@@ -1,5 +1,6 @@
 ﻿using KLog.DataModel.Entities;
 using System;
+using System.Collections.Generic;
 
 namespace KLog.Api.Core.Queries
 {
@@ -10,6 +11,8 @@ namespace KLog.Api.Core.Queries
         private int _page = 1;
 
         public string Source { get; set; }
+        public string SearchText { get; set; }
+        public string SearchFields { get; set; }
         public bool MostRecent { get; set; } = true;
         public LogLevel? LogLevel { get; set; }
         public DateTimeOffset? StartTime { get; set; }
