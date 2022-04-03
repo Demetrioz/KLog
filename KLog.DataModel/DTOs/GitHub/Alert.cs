@@ -21,6 +21,6 @@ namespace KLog.DataModel.DTOs.GitHub
         [JsonProperty("ghsa_id")]
         public string GHSAId { get; set; }
         [JsonProperty("created_at")]
-        public DateTimeOffset Created { get; set; }
+        public DateTimeOffset? Created { get; set; }
     }
 }

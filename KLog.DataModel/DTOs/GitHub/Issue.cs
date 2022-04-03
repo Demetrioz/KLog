@@ -21,11 +21,11 @@ namespace KLog.DataModel.DTOs.GitHub
         [JsonProperty("assignee")]
         public Owner Assignee { get; set; }
         [JsonProperty("created_at")]
-        public DateTimeOffset Created { get; set; }
+        public DateTimeOffset? Created { get; set; }
         [JsonProperty("updated_at")]
-        public DateTimeOffset Updated { get; set; }
+        public DateTimeOffset? Updated { get; set; }
         [JsonProperty("closed_at")]
-        public DateTimeOffset Closed { get; set; }
+        public DateTimeOffset? Closed { get; set; }
         [JsonProperty("repository")]
         public Repository Repo { get; set; }
     }
