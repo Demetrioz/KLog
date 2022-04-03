@@ -5,7 +5,7 @@ namespace KLog.DataModel.DTOs.GitHub
     public class Label
     {
         [JsonProperty("id")]
-        public int Id { get; set; }
+        public long Id { get; set; }
         [JsonProperty("url")]
         public string URL { get; set; }
         [JsonProperty("name")]

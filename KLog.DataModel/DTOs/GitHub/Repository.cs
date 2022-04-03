@@ -6,7 +6,7 @@ namespace KLog.DataModel.DTOs.GitHub
     public class Repository
     {
         [JsonProperty("id")]
-        public int Id { get; set; }
+        public long Id { get; set; }
         [JsonProperty("name")]
         public string Name { get; set; }
         [JsonProperty("full_name")]

@@ -5,7 +5,7 @@ namespace KLog.DataModel.DTOs.GitHub
     public class PullRequest
     {
         [JsonProperty("id")]
-        public int Id { get; set; }
+        public long Id { get; set; }
         [JsonProperty("html_url")]
         public string Url { get; set; }
         [JsonProperty("number")]

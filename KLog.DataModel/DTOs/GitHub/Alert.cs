@@ -5,7 +5,7 @@ namespace KLog.DataModel.DTOs.GitHub
     public class Alert
     {
         [JsonProperty("id")]
-        public int Id { get; set; }
+        public long Id { get; set; }
         [JsonProperty("affected_range")]
         public string AffectedRange { get; set; }
         [JsonProperty("affected_package_name")]

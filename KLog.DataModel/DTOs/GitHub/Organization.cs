@@ -6,7 +6,7 @@ namespace KLog.DataModel.DTOs.GitHub
     public class Organization
     {
         [JsonProperty("id")]
-        public int Id { get; set; }
+        public long Id { get; set; }
         [JsonProperty("login")]
         public string Login { get; set; }
         [JsonProperty("url")]

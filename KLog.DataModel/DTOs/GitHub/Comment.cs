@@ -6,7 +6,7 @@ namespace KLog.DataModel.DTOs.GitHub
     public class Comment
     {
         [JsonProperty("id")]
-        public int Id { get; set; }
+        public long Id { get; set; }
         [JsonProperty("body")]
         public string Body { get; set; }
         [JsonProperty("user")]
