@@ -26,4 +26,8 @@
     <ProjectReference Include="..\KLog.DataModel\KLog.DataModel.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
 </Project>

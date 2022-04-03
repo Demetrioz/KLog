@@ -68,6 +68,9 @@ namespace KLog.Api.Services
                 case PullRequestEvent prEvent:
                     await HandlePrEvent(baseLog, prEvent);
                     break;
+                case Push push:
+                    await HandlePush(baseLog, push);
+                    break;
                 case RepositoryVulnerability vulnerability:
                     await HandleVulnerabilityAlert(baseLog, vulnerability);
                     break;
@@ -82,9 +85,22 @@ namespace KLog.Api.Services
                     }
                     catch(Exception ex)
                     {
-                        // TODO: Add a system log. Who should have access to these? 
-                        // The first user? First user can be "Admin" and control access
-                        // of other users?
+                        Log exceptionLog = new Log
+                        {
+                            Timestamp = DateTimeOffset.Now,
+                            Level = LogLevel.Error,
+                            ApplicationId = appId,
+                            Source = EventSource,
+                            Message = ex.Message,
+                            Data = JsonConvert.SerializeObject(new
+                            {
+                                Event = JsonConvert.SerializeObject(eventObject),
+                                Stacktrace = ex.StackTrace,
+                                InnerException = ex.InnerException?.Message,
+                            })
+                        };
+
+                        await SaveLog(exceptionLog);
                     }
                     break;
             }
@@ -170,7 +186,7 @@ namespace KLog.Api.Services
             log.Subject = "Comment";
             log.Component = issueComment.Issue.URL;
             log.Message = $"{issueComment.Sender.Login} commented on issue {issueComment.Issue.Number} " +
-                $"from {issueComment.Issue.Repo.Name}";
+                $"from {issueComment.Issue.Repo.FullName}";
 
             await SaveLog(log);
         }
@@ -203,7 +219,16 @@ namespace KLog.Api.Services
         {
             log.Subject = "PullRequest";
             log.Component = prEvent.Repo.Name;
-            log.Message = $"PR {prEvent.PR.Number} was {prEvent.Action} for {prEvent.Repo.Name}";
+            log.Message = $"PR {prEvent.PR.Number} was {prEvent.Action} for {prEvent.Repo.FullName}";
+
+            await SaveLog(log);
+        }
+
+        public async Task HandlePush(Log log, Push push)
+        {
+            log.Subject = "Push";
+            log.Component = push.Repo.Name;
+            log.Message = $"{push.Sender.Login} pushed changes to {push.Repo.FullName}";
 
             await SaveLog(log);
         }

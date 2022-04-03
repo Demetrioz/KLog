@@ -34,6 +34,7 @@ namespace KLog.Api.Controllers
             { "issues", typeof(Issues) },
             { "label", typeof(LabelEvent) },
             { "pull_request", typeof(PullRequestEvent) },
+            { "push", typeof(Push) },
             { "repository_vulnerability_alert", typeof(RepositoryVulnerability) },
             { "star", typeof(Star) }
         };
