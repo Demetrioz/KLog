@@ -25,9 +25,11 @@ is to simplify the steps as much as possible.
 2. Setup an IIS site
 3. Download the release files from [GitHub](https://github.com/), and extract
    them to the IIS directory
-4. Create an appsettings.production.json mirroring step 3 from
+4. Update the appsettings.production.json mirroring step 3 from
    [Build Process](./build.md)
-5. Start the IIS site
+5. Make sure you have an ASPNETCORE_ENVIRONMENT environemnt variable set to
+   Production
+6. Start the IIS site
 
 ## Docker
 

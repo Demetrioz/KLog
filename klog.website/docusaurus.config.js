@@ -8,7 +8,7 @@ const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 const config = {
   title: "KLog",
   tagline: "Simple, developer-focused logging",
-  url: "https://klog.kevinwilliams.dev",
+  url: "https://klogdocs.kevinwilliams.dev",
   baseUrl: "/",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
