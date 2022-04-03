@@ -1,6 +1,8 @@
 .vs
 bin
 obj
+PublishProfiles
+ServiceDependencies
 wwwroot
 
 node_modules

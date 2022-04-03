@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
-import { clone } from "lodash";
+import { clone, orderBy } from "lodash";
 
 import Checkbox from "@mui/material/Checkbox";
 import IconButton from "@mui/material/IconButton";
@@ -79,6 +79,7 @@ function Feed() {
     const handleNewLog = (log) => {
       let updatedLogs = clone(logs.current);
       updatedLogs.push(log);
+      updatedLogs = orderBy(updatedLogs, ["timestamp"], ["desc"]);
       setLogs(updatedLogs);
       handleSearch({ key: "Enter", target: { value: searchString.current } });
     };
