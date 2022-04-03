@@ -138,7 +138,7 @@ function Investigate() {
 
       let logs = results.items;
       while (results.nextPageUrl) {
-        results = await KLogApiService.logs.getLogPage(results.nextPageUrl);
+        results = await KLogApiService.Logs.getLogsByUrl(results.nextPageUrl);
         logs = logs.concat(results.items);
       }
 

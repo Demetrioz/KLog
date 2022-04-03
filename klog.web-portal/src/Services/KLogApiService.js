@@ -8,7 +8,7 @@ class KLogApiService {
   static Auth = require("./KLogApi/Auth");
   static Keys = require("./KLogApi/Keys");
 
-  static async request(uri, body, method) {
+  static async request(uri, body, method, direct = false) {
     let headers = {
       "Content-Type": "application/json",
       Authorization: `Bearer ${this.userToken}`,
@@ -20,7 +20,7 @@ class KLogApiService {
       method: method,
     };
 
-    let url = `${this.apiUrl}${uri}`;
+    let url = direct ? uri : `${this.apiUrl}${uri}`;
 
     let response = await fetch(url, options);
     response = await response.json();

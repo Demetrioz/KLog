@@ -27,7 +27,7 @@ and searching for logs
 
 ## v0.1.1 (2022-04-03)
 
-Minor bug fix for github integration
+Minor bug fix for github integration and log searching
 
 ### Features
 
@@ -36,6 +36,7 @@ Minor bug fix for github integration
 ### Bug Fixes
 
 - Changed the data type of "id" values from github from int to long
+- Resolved a web portal issue retrieving logs when there were multiple pages
 
 ### Known Issues
 
