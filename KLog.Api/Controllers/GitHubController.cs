@@ -82,7 +82,7 @@ namespace KLog.Api.Controllers
                 if(githubAppId > 0)
                 {
                     string eventType = Request.Headers
-                        .Where(h => h.Key == "X-Github-Event")
+                        .Where(h => h.Key == "X-GitHub-Event" || h.Key == "X-Github-Event")
                         .Select(h => h.Value.ToString())
                         .FirstOrDefault();
 
