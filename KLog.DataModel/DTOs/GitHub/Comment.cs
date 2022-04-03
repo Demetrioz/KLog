@@ -12,8 +12,8 @@ namespace KLog.DataModel.DTOs.GitHub
         [JsonProperty("user")]
         public Owner User { get; set; }
         [JsonProperty("created_at")]
-        public DateTimeOffset Created { get; set; }
+        public DateTimeOffset? Created { get; set; }
         [JsonProperty("updated_at")]
-        public DateTimeOffset Updated { get; set; }
+        public DateTimeOffset? Updated { get; set; }
     }
 }
