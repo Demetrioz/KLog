@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # Release Notes
 
-## v0.1.0 (2022-04-03)
+## [v0.1.0 (2022-04-03)](https://github.com/Demetrioz/KLog/releases/tag/v0.1.0)
 
 The initial release of KLog. Contains basic functionality for saving, displaying,
 and searching for logs
@@ -25,7 +25,7 @@ and searching for logs
 
 - N/A
 
-## v0.1.1 (2022-04-03)
+## [v0.1.1 (2022-04-03)](https://github.com/Demetrioz/KLog/releases/tag/v0.1.1)
 
 Minor bug fix for github integration and log searching
 
