@@ -24,3 +24,19 @@ and searching for logs
 ### Known Issues
 
 - N/A
+
+## v0.1.1 (2022-04-03)
+
+Minor bug fix for github integration
+
+### Features
+
+- N/A
+
+### Bug Fixes
+
+- Changed the data type of "id" values from github from int to long
+
+### Known Issues
+
+- N/A
