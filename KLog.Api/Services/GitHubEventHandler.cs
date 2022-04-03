@@ -255,8 +255,12 @@ namespace KLog.Api.Services
         }
         public async Task HandleDefaultEvent(Log log, GitHubEvent e, string eventType)
         {
+            string org = e.Org != null
+                ? $"from {e.Org.Name}"
+                : "";
+
             log.Subject = e.Action;
-            log.Message = $"{e.Sender.Login} from {e.Org.Login} performed {eventType} on {e.Repo.Name }";
+            log.Message = $"{e.Sender.Login} {org} performed {eventType} on {e.Repo.Name }";
 
             await SaveLog(log);
         }
