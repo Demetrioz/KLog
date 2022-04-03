@@ -20,4 +20,4 @@ export const getLogs = async (
 };
 
 export const getLogsByUrl = async (url) =>
-  await KLogApiService.request(url, null, "GET");
+  await KLogApiService.request(url, null, "GET", true);
