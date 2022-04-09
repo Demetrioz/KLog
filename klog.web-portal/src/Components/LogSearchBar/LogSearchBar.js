@@ -59,6 +59,10 @@ function LogSearchBar(props) {
     setSearchText(event.target.value);
   };
 
+  const handleKeyDown = (event) => {
+    if (props.onTextKeyDown) props.onTextKeyDown(event);
+  };
+
   return (
     <div id="search_bar" style={{ display: "flex" }}>
       {props.showDatePickers && (
@@ -117,6 +121,7 @@ function LogSearchBar(props) {
         margin="normal"
         fullWidth
         onChange={handleTextChange}
+        onKeyDown={handleKeyDown}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">

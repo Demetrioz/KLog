@@ -2,16 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
 import { clone, orderBy } from "lodash";
 
-import Checkbox from "@mui/material/Checkbox";
-import IconButton from "@mui/material/IconButton";
-import InputAdornment from "@mui/material/InputAdornment";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import TextField from "@mui/material/TextField";
-
-import FilterIcon from "@mui/icons-material/FilterList";
-import SearchIcon from "@mui/icons-material/SearchRounded";
-import VisibilityIcon from "@mui/icons-material/Visibility";
+import LogSearchBar from "../../Components/LogSearchBar/LogSearchBar";
 
 import BasePage from "../BasePage/BasePage";
 import LogLine from "../../Components/LogLine/LogLine";
@@ -27,20 +18,17 @@ function Feed() {
   const [searchString, setSearchString] = useAsyncRef("");
   const [filteredLogs, setFilteredLogs] = useState([]);
 
+  // Search / filter options
   const [sourceFilter, setSourceFilter] = useState(true);
   const [subjectFilter, setSubjectFilter] = useState(true);
   const [levelFilter, setLevelFilter] = useState(true);
   const [messageFilter, setMessageFilter] = useState(true);
-  const [filterAnchor, setFilterAnchor] = useState(null);
 
+  // Visibility options
   const [source, setSource] = useState(true);
   const [subject, setSubject] = useState(true);
   const [level, setLevel] = useState(true);
   const [message, setMessage] = useState(true);
-  const [visibilityAnchor, setVisibilityAnchor] = useState(null);
-
-  const filterOpen = Boolean(filterAnchor);
-  const visibilityOpen = Boolean(visibilityAnchor);
 
   // Put the most recent logs on top. The div's direction (column-reverse)
   // will then put the newest on the bottom and always scroll, as intended
@@ -104,19 +92,6 @@ function Feed() {
     return disconnectFromHub;
   }, []);
 
-  const handleFilterClick = (event) => {
-    setFilterAnchor(event.currentTarget);
-  };
-
-  const handleVisibilityClick = (event) => {
-    setVisibilityAnchor(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setFilterAnchor(null);
-    setVisibilityAnchor(null);
-  };
-
   const handleSearch = (event) => {
     if (event.key === "Enter")
       if (event.target.value === "") {
@@ -167,75 +142,60 @@ function Feed() {
           >
             {logLines}
           </div>
-          <TextField
-            id="search"
-            variant="outlined"
-            margin="normal"
-            onKeyDown={handleSearch}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton aria-label="filter" onClick={handleFilterClick}>
-                    <FilterIcon />
-                  </IconButton>
-                  <IconButton
-                    aria-label="display"
-                    onClick={handleVisibilityClick}
-                  >
-                    <VisibilityIcon />
-                  </IconButton>
-                  <Menu
-                    anchorEl={filterAnchor}
-                    open={filterOpen}
-                    onClose={handleClose}
-                  >
-                    <MenuItem onClick={() => setSourceFilter(!sourceFilter)}>
-                      <Checkbox checked={sourceFilter} />
-                      Source
-                    </MenuItem>
-                    <MenuItem onClick={() => setSubjectFilter(!subjectFilter)}>
-                      <Checkbox checked={subjectFilter} />
-                      Subject
-                    </MenuItem>
-                    <MenuItem onClick={() => setLevelFilter(!levelFilter)}>
-                      <Checkbox checked={levelFilter} />
-                      Level
-                    </MenuItem>
-                    <MenuItem onClick={() => setMessageFilter(!messageFilter)}>
-                      <Checkbox checked={messageFilter} />
-                      Message
-                    </MenuItem>
-                  </Menu>
-                  <Menu
-                    anchorEl={visibilityAnchor}
-                    open={visibilityOpen}
-                    onClose={handleClose}
-                  >
-                    <MenuItem onClick={() => setSource(!source)}>
-                      <Checkbox checked={source} />
-                      Source
-                    </MenuItem>
-                    <MenuItem onClick={() => setSubject(!subject)}>
-                      <Checkbox checked={subject} />
-                      Subject
-                    </MenuItem>
-                    <MenuItem onClick={() => setLevel(!level)}>
-                      <Checkbox checked={level} />
-                      Level
-                    </MenuItem>
-                    <MenuItem onClick={() => setMessage(!message)}>
-                      <Checkbox checked={message} />
-                      Message
-                    </MenuItem>
-                  </Menu>
-                </InputAdornment>
-              ),
-            }}
+          <LogSearchBar
+            onTextKeyDown={handleSearch}
+            searchOptions={[
+              {
+                id: "source",
+                value: sourceFilter,
+                text: "Source",
+                handler: setSourceFilter,
+              },
+              {
+                id: "subject",
+                value: subjectFilter,
+                text: "Subject",
+                handler: setSubjectFilter,
+              },
+              {
+                id: "level",
+                value: levelFilter,
+                text: "Level",
+                handler: setLevelFilter,
+              },
+              {
+                id: "message",
+                value: messageFilter,
+                text: "Message",
+                handler: setMessageFilter,
+              },
+            ]}
+            visibilityOptions={[
+              {
+                id: "source",
+                value: source,
+                text: "Source",
+                handler: setSource,
+              },
+              {
+                id: "subject",
+                value: subject,
+                text: "Subject",
+                handler: setSubject,
+              },
+              {
+                id: "level",
+                value: level,
+                text: "Level",
+                handler: setLevel,
+              },
+              {
+                id: "message",
+                value: message,
+                text: "Message",
+                handler: setMessage,
+              },
+            ]}
           />
         </div>
       }
